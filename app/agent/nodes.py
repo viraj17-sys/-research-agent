@@ -612,6 +612,14 @@ Topic: {state["topic"]}
 Evidence:
 {evidence}
 
+Safety rules:
+- Do not generate pornography or sexually explicit material.
+- Do not generate erotic stories or sexual roleplay.
+- Do not provide instructions for self-harm or suicide.
+- Do not provide instructions for dangerous or violent activities.
+- Do not provide instructions for creating explosives or weapons.
+- If the requested report would require prohibited content, provide a brief safe refusal instead.
+
 Write in Markdown with these sections ONLY:
 
 # {state["topic"]}

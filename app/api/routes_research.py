@@ -11,6 +11,11 @@ from app.database import crud
 from app.schemas.chat import ChatRequest
 from app.agent.graph import research_graph
 
+from app.safety.content_filter import (
+    is_restricted_content,
+    RESTRICTION_MESSAGE,
+)
+
 router = APIRouter(prefix="/api", tags=["research"])
 
 
@@ -92,6 +97,75 @@ async def chat_endpoint(payload: ChatRequest, request: Request):
     if not user_message:
         raise HTTPException(status_code=400, detail="Empty message")
 
+
+    # ========================================================
+    # CONTENT SAFETY CHECK
+    # Applies to ALL users regardless of age.
+    # ========================================================
+
+    if is_restricted_content(user_message):
+
+        db = SessionLocal()
+
+        try:
+            chat_id = payload.chat_id
+
+            if not chat_id:
+                chat = crud.create_chat(
+                    db,
+                    "Content Restricted"
+                )
+                chat_id = str(chat.id)
+            else:
+                chat = crud.get_chat(db, chat_id)
+
+                if not chat:
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Chat not found"
+                    )
+
+            # Save user's message
+            crud.add_message(
+                db,
+                chat_id,
+                "user",
+                user_message
+            )
+
+            # Save safety response
+            assistant_msg = crud.add_message(
+                db,
+                chat_id,
+                "assistant",
+                RESTRICTION_MESSAGE
+            )
+
+            crud.touch_chat(db, chat_id)
+
+            assistant_id = str(assistant_msg.id)
+
+        finally:
+            db.close()
+
+        async def restricted_generator():
+
+            yield _event(
+                "research_started",
+                chat_id=chat_id,
+                message=user_message,
+            )
+
+            yield _event(
+                "content_restricted",
+                chat_id=chat_id,
+                message_id=assistant_id,
+                response=RESTRICTION_MESSAGE,
+            )
+
+        return EventSourceResponse(restricted_generator())
+
+    
     # ---- Greeting short-circuit ----
     if _is_greeting(user_message):
         db = SessionLocal()
@@ -252,8 +326,17 @@ async def chat_endpoint(payload: ChatRequest, request: Request):
                         yield _event("writing_started")
 
             # ---- Persist result ----
-            report = latest_state.get("final_report", "") or ""
-            sources = latest_state.get("search_results", [])
+report = latest_state.get("final_report", "") or ""
+sources = latest_state.get("search_results", [])
+
+# ========================================================
+# FINAL OUTPUT SAFETY CHECK
+# ========================================================
+
+if is_restricted_content(report):
+    print("⚠️ Restricted content detected in AI output.")
+    report = RESTRICTION_MESSAGE
+    sources = []
 
             if not report.strip():
                 report = (

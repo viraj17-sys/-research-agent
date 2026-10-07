@@ -384,6 +384,22 @@ async function sendMessage(text) {
           sseCompleted = true;
           break;
         }
+        
+        case "content_restricted":
+          finalReport = payload.response || 
+            "🛡️ Content Restricted\n\n" +
+            "I can't help with explicit, harmful, or dangerous content. " +
+            "I can help with safe, educational, or research-related information instead.";
+
+          finalSources = [];
+          newChatId = payload.chat_id || newChatId;
+
+          sseCompleted = true;
+
+          setStatus("Content Restricted", "#ef4444");
+
+          break;
+
 
         case "error":
           addStep(progress, "warn", `❌ Error: ${escapeHtml(payload.message || "unknown")}`, "warn");
