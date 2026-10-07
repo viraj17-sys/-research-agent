@@ -1,0 +1,41 @@
+def extract_text(response) -> str:
+
+    if response is None:
+        return ""
+
+    content = getattr(
+        response,
+        "content",
+        response
+    )
+
+    if isinstance(content, str):
+        return content
+
+    if isinstance(content, list):
+
+        parts = []
+
+        for part in content:
+
+            if isinstance(part, dict):
+
+                text = part.get(
+                    "text",
+                    ""
+                )
+
+                if text:
+                    parts.append(
+                        str(text)
+                    )
+
+            else:
+
+                parts.append(
+                    str(part)
+                )
+
+        return "\n".join(parts)
+
+    return str(content)

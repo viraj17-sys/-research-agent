@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🔎 Research Agent</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%8E%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/style.css?v=11" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-icon">🔎</span>
+        <span class="brand-name">Research Agent</span>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <button class="nav-item active"><i data-lucide="home"></i><span>Home</span></button>
+      <button class="nav-item"><i data-lucide="layout-template"></i><span>Templates</span></button>
+      <button class="nav-item"><i data-lucide="compass"></i><span>Explore</span></button>
+      <button class="nav-item"><i data-lucide="clock"></i><span>History</span></button>
+      <button class="nav-item"><i data-lucide="wallet"></i><span>Wallet</span></button>
+    </div>
+
+    <button id="new-chat-btn" class="new-chat-btn">
+      <i data-lucide="plus"></i>
+      <span>New Research</span>
+    </button>
+
+    <div class="history-label">Chats</div>
+    <div id="chats-list" class="chats-list"></div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">JD</div>
+      <div class="user-info">
+        <div class="user-name">John Doe</div>
+        <div class="user-plan">Free Plan</div>
+      </div>
+      <i data-lucide="chevron-down" style="width:14px;height:14px;color:var(--axora-dim)"></i>
+    </div>
+
+    <div class="sidebar-footer">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-text">Ready</span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="side-accent"></div>
+
+    <header class="topbar">
+      <div class="topbar-title">
+        <button id="menu-toggle" class="menu-toggle hidden" title="Menu">
+          <i data-lucide="menu"></i>
+        </button>
+        <i data-lucide="bot"></i>
+        <span>Agentic Research</span>
+      </div>
+<div class="topbar-actions"></div>
+    </header>
+
+    <section id="messages" class="messages">
+      <div class="welcome" id="welcome">
+        <div class="welcome-orb"></div>
+        <h1>
+          <span class="greeting">Good Evening, DeepAI.</span>
+          <span class="question">Can I help you with anything?</span>
+        </h1>
+        <p>Ask a question. The agent will plan, search the web, evaluate evidence, and write a report — live.</p>
+
+        <div class="suggestions">
+          <button class="suggestion" data-q="What is Agentic RAG and how does it work?">
+            <i data-lucide="search"></i> Search the web
+          </button>
+          <button class="suggestion" data-q="Latest developments in Agentic AI in 2025">
+            <i data-lucide="trending-up"></i> Latest in Agentic AI
+          </button>
+          <button class="suggestion" data-q="Compare LangGraph and CrewAI for building AI agents">
+            <i data-lucide="git-compare"></i> LangGraph vs CrewAI
+          </button>
+        </div>
+
+        <div class="feature-cards">
+          <div class="feature-card" data-q="Smart budget strategies for research projects">
+            <h3>Smart Budget</h3>
+            <p>A budget that fits your research needs, not the other way around.</p>
+          </div>
+          <div class="feature-card" data-q="Analytics for research workflows">
+            <h3>Analytics</h3>
+            <p>Analytics empowers individuals and teams to make informed decisions.</p>
+          </div>
+          <div class="feature-card" data-q="Spending optimization for research tools">
+            <h3>Spending</h3>
+            <p>Spending is the way individuals and organizations use their resources.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="input-bar" id="input-bar">
+      <form id="chat-form" autocomplete="off">
+        <textarea id="user-input" rows="1" placeholder="Message AI Chat..."></textarea>
+        <button type="submit" id="send-btn" title="Send"><i data-lucide="send"></i></button>
+        <button type="button" id="stop-btn" class="hidden" title="Stop"><i data-lucide="square"></i></button>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<script src="/static/script.js?v=11"></script>
+</body>
+</html>

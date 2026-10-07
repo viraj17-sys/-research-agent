@@ -1,0 +1,108 @@
+def parse_evaluation_text(
+    text: str
+) -> ResearchEvaluation:
+
+    if not text:
+
+        return ResearchEvaluation(
+
+            is_sufficient=True,
+
+            reason=(
+                "Evaluator returned no response. "
+                "Available evidence will be used."
+            ),
+
+            missing_information="",
+
+            follow_up_query=""
+        )
+
+    # Remove Markdown code fences
+    cleaned = text.strip()
+
+    if cleaned.startswith("```"):
+
+        cleaned = cleaned.replace(
+            "```json",
+            ""
+        )
+
+        cleaned = cleaned.replace(
+            "```",
+            ""
+        )
+
+        cleaned = cleaned.strip()
+
+    # Try JSON first
+    try:
+
+        data = json.loads(
+            cleaned
+        )
+
+        return ResearchEvaluation(
+
+            is_sufficient=bool(
+                data.get(
+                    "is_sufficient",
+                    True
+                )
+            ),
+
+            reason=str(
+                data.get(
+                    "reason",
+                    ""
+                )
+            ),
+
+            missing_information=str(
+                data.get(
+                    "missing_information",
+                    ""
+                )
+            ),
+
+            follow_up_query=str(
+                data.get(
+                    "follow_up_query",
+                    ""
+                )
+            )
+        )
+
+    except Exception:
+
+        pass
+
+    # If Groq returned normal text,
+    # safely use it as the evaluation reason.
+
+    lower_text = text.lower()
+
+    insufficient = (
+        "insufficient" in lower_text
+        or
+        "not sufficient" in lower_text
+        or
+        "missing information" in lower_text
+        or
+        "information gap" in lower_text
+    )
+
+    return ResearchEvaluation(
+
+        is_sufficient=not insufficient,
+
+        reason=text[:2000],
+
+        missing_information=(
+            "Additional information is required."
+            if insufficient
+            else ""
+        ),
+
+        follow_up_query=""
+    )
